@@ -1,0 +1,4 @@
+---
+projectName: "HalithorsRecipeSystem"
+dependencies:
+- "https://github.com/wurstscript/wurstStdlib2"
