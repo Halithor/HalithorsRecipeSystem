@@ -22,27 +22,28 @@ public function unit.recipeCanCraft(int recipeId) returns boolean
 /** Attemps to craft a given recipe for a unit. Returns whether or not it was 
     successful.
  */
-public function unit.recipeCraft(int recipeId) returns boolean
+public function unit.recipeCraft(int recipeId) returns item
     return RECIPE_MAP.get(recipeId).craft(this)
 
 /** Attempts to craft any recipe registered in the system that the unit has the
     ingredients to craft. If more than one recipe can be crafted, a semi-random
     one will be selected.
 
-    Returns whether a recipe was crafted or not.
+    Returns the item crafted or null, if none was crafted.
  */
-public function unit.recipeCraftAny() returns boolean
+public function unit.recipeCraftAny() returns item
     return this.recipeCraftAny((_, _u) -> true)
 
-public function unit.recipeCraftAutomatic() returns boolean
+public function unit.recipeCraftAutomatic() returns item
     return this.recipeCraftAny((rec, crafter) -> rec.isAutomatic(crafter))
 
 /** The same as the other version, except the filter needs to approve the recipe
     for the unit to craft. Useful for limiting the recipes available for a given
     unit.
  */
-public function unit.recipeCraftAny(RecipeFilter filter) returns boolean
+public function unit.recipeCraftAny(RecipeFilter filter) returns item
     var itemCrafted = false
+    item crafted = null
     for i = 0 to bj_MAX_INVENTORY - 1
         if not itemCrafted
             let itemId = this.itemInSlot(i).getTypeId()
@@ -52,6 +53,7 @@ public function unit.recipeCraftAny(RecipeFilter filter) returns boolean
                         if not itemCrafted
                             let recipe = RECIPE_MAP.get(recipeId)
                             if filter.passesFilter(recipe, this)
-                                itemCrafted = recipe.craft(this)
-                    
-    return itemCrafted
+                                crafted = recipe.craft(this)
+                                itemCrafted = crafted != null
+                                
+    return crafted

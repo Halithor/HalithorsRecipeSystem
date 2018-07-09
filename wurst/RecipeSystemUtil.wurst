@@ -8,6 +8,18 @@ public function unit.getChargesOfItem(int itemId) returns int
             count += this.itemInSlot(i).getCharges()
     return count
 
+public function unit.removeChargesOfItem(int itemId, int charges)
+    var chargesLeft = charges
+    for i = 0 to this.inventorySize() - 1
+        let slotItm = this.itemInSlot(i)
+        if slotItm.getTypeId() == itemId
+            let toRemove = min(chargesLeft, slotItm.getCharges())
+            if (toRemove == slotItm.getCharges())
+                slotItm.remove()
+            else 
+                slotItm.setCharges(slotItm.getCharges() - toRemove)
+            chargesLeft -= toRemove
+
 public function unit.getEmptyInventorySlots() returns int
     var count = 0
     for i = 0 to this.inventorySize() - 1

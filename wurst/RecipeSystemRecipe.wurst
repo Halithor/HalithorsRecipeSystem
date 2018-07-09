@@ -6,6 +6,7 @@ import ObjectIdGenerator
 import ErrorHandling
 import RecipeSystemGlobals
 import LinkedList
+import RecipeSystemUtil
 
 // This one is secret to avoid overlap with the other, public one.
 constant SECRECT_RECIPE_ID_GEN = new IdGenerator('IX00')
@@ -69,7 +70,10 @@ public class RecipeIngredientsUnordered extends RecipeIngredients
     
     override function removeFromUnit(unit u) returns bool
         let satisfied = doesUnitSatisfy(u)
-        
+        if satisfied
+            for itemId in ingredients
+                let reqCount = ingredients.get(itemId)
+                u.removeChargesOfItem(itemId, reqCount)
         return satisfied
 
     override function iterator() returns HLIterator<int>
@@ -77,11 +81,11 @@ public class RecipeIngredientsUnordered extends RecipeIngredients
 
     // adds an ingredient that only requires one count
     function addIngredient(int itemId)
-        skip
+        ingredients.put(itemId, 1)
         
     // adds an ingredient with the given count requirement
     function addIngredient(int itemId, int count)
-        skip
+        ingredients.put(itemId, count)
 
 
 public class RecipeIngredientsOrdered extends RecipeIngredients
@@ -188,12 +192,20 @@ public class Recipe
 
     /** Craft this recipe for the unit
      */
-    function craft(unit crafter) returns bool
+    function craft(unit crafter) returns item
         let craftable = canCraft(crafter)
+        item crafted = null
         if craftable
-            
-        return craftable
+            ingredients.removeFromUnit(crafter)
+            crafted = crafter.addItemById(productId)
+        return crafted
 
-    function craftOnGround(unit crafter, vec2 productPos)
+    function craftOnGround(unit crafter, vec2 productPos) returns item
+        let craftable = canCraft(crafter)
+        item crafted = null
+        if craftable
+            ingredients.removeFromUnit(crafter)
+            crafted = createItem(productId, productPos)
+        return crafted
 
 
