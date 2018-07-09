@@ -9,7 +9,6 @@ public function handleItemPickup()
     let itm = GetManipulatedItem()
     let itemId = itm.getTypeId()
     let user = GetManipulatingUnit()
-    let charges = itm.getCharges()
     let itemInfo = ITEM_INFO_MAP.get(itemId)
     let stackLimit = itemInfo.getStackLimit(user)
     if stackLimit <= 0

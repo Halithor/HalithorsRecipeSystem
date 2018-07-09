@@ -1,7 +1,6 @@
 package RecipeSystemSetup
 
 import RegisterEvents
-import RecipeSystemGlobals
 import RecipeSystemConfig
 import RecipeSystemHandlePickup
 
