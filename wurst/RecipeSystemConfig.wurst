@@ -1,5 +1,7 @@
 package RecipeSystemConfig
 
+// Need this import to do the init functions
+import public initlater RecipeSystemSetup
 import public RecipeSystemRegisterItem
 import public RecipeSystemRegisterRecipe
 
@@ -8,12 +10,12 @@ import public RecipeSystemRegisterRecipe
     `Recipe.setAutomaticCraft()` method to activate craft on item acquire for a
     recipe.
 */
-public constant doAutomaticRecipes = true
+@configurable public constant doAutomaticRecipes = true
 
 /** Whether or not to stack items. Only turn this to false if no items are 
     registered as stacking.
  */
-public constant doItemStacking = true
+@configurable public constant doItemStacking = true
 
 
 
