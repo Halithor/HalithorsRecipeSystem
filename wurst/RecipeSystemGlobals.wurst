@@ -2,7 +2,7 @@ package RecipeSystemGlobals
 
 import HashMap
 import LinkedList
-import RecipeSystemItemInfo
+import initlater RecipeSystemItemInfo
 import initlater RecipeSystemRecipe
 
 

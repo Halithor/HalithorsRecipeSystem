@@ -15,10 +15,11 @@ public function handleItemPickup()
         // Drop this item, can't carry
         user.dropItemPoint(itm, user.getPos())
         // TODO warn user they can't carry the item
-
-    if doItemStacking
-        user.stackItemsOfType(itemId)
-        
-    // Find all recipes containing this item, check for combos that are automatic.
-    user.recipeCraftAny()
+    else
+        // we can carry this item, so stack it and craft it.
+        if doItemStacking and itemInfo.isStacking()
+            user.stackItemsOfType(itemId)
+            
+        // Find all recipes containing this item, check for combos that are automatic.
+        user.recipeCraftAutomatic()
             

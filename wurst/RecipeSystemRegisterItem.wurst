@@ -3,15 +3,19 @@ package RecipeSystemRegisterItem
 import RecipeSystemItemInfo
 
 /** Register an item for the system. */
-public function registerItem(int itemId, string name)
-    skip
+public function registerItem(int itemId, string name) returns ItemInfo
+    return new ItemInfo(itemId)
+        ..setName(name)
 
-/** Register an item for the system. */
-public function registerItem(int itemId, string name, int stackMax)
-    skip
+/** Register an item for the system, with the given global max. */
+public function registerItem(int itemId, string name, int stackMax) returns ItemInfo
+    return new ItemInfo(itemId, stackMax)
+        ..setName(name)
 
-public function registerItem(int itemId, string name, ItemStackLimit stackLimiter)
-    skip
+/** Register an item for the system, with the given limiter function. */
+public function registerItem(int itemId, string name, ItemStackLimit stackLimiter)  returns ItemInfo
+    return new ItemInfo(itemId, stackLimiter)
+        ..setName(name)
 
 // /** Register an item for the system with an description */
 // public function registerItem(int itemId, string name, string description)

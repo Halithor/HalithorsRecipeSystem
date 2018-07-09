@@ -1,15 +1,20 @@
 package RecipeSystemItemInfo
 
-interface ItemStackLimit
+import RecipeSystemGlobals
+public interface ItemStackLimit
     function getStackLimit(int itemId, unit manipulator) returns int
 
 // Contains information about an item in the system
 public class ItemInfo
     int itemId = 0
+    string name
     bool stacking = false
     int stackLimitDefault = 1
     // The function that can determine the number of items the unit can carry
     ItemStackLimit stackLimit = null
+    
+    private function addToGlobals()
+        ITEM_INFO_MAP.put(itemId, this)
 
     construct(int itemId)
         this.itemId = itemId
@@ -33,3 +38,11 @@ public class ItemInfo
                 result = stackLimit.getStackLimit(itemId, manipulator)
         return result
         
+    function setName(string name)
+        this.name = name
+
+    function getName() returns string
+        return name
+
+    function isStacking() returns bool
+        return stacking
