@@ -18,16 +18,19 @@ public class ItemInfo
 
     construct(int itemId)
         this.itemId = itemId
+        addToGlobals()
 
     construct(int itemId, int stackLimit)
         this.itemId = itemId
         this.stacking = true
         this.stackLimitDefault = stackLimit
+        addToGlobals()
 
     construct(int itemId, ItemStackLimit stackLimit)
         this.itemId = itemId
         this.stacking = true
         this.stackLimit = stackLimit
+        addToGlobals()
     
     function getStackLimit(unit manipulator) returns int
         var result = 1
