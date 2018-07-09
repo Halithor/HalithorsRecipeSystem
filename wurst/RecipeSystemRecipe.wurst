@@ -1,0 +1,199 @@
+package RecipeSystemRecipe
+
+import HashMap
+import HashList
+import ObjectIdGenerator
+import ErrorHandling
+import RecipeSystemGlobals
+import LinkedList
+
+// This one is secret to avoid overlap with the other, public one.
+constant SECRECT_RECIPE_ID_GEN = new IdGenerator('IX00')
+
+interface AutomaticChecker
+    function isAutomaticForUnit(unit u) returns bool
+
+function unit.getCountOfItem(int itemId) returns int
+    var charges = 0
+    for i = 0 to this.inventorySize() - 1
+        let inSlot = this.itemInSlot(i)
+        if inSlot != null and inSlot.getTypeId() == itemId
+            charges += inSlot.getCharges()
+    return charges
+    
+
+tuple itemReq(int itemId, int count)
+
+// public class IngredientsIterator
+//     protected int i = 0
+//     protected HashList<int> list
+
+//     construct(RecipeIngredientsOrdered ordered)
+//         ordered.d
+    
+//     construct(RecipeIngredientsUnordered unorded)
+//         skip
+
+//     function hasNext() returns bool
+//         return i < list.size()
+
+//     function remove()
+
+    
+
+public abstract class RecipeIngredients 
+    
+    /** Does the given unit satisfy these ingredients?
+    */
+    abstract function doesUnitSatisfy(unit u) returns bool
+
+    /** Removes the ingredients from a given unit, but only if the entire 
+        requirement is satisfied.
+     */
+    abstract function removeFromUnit(unit u) returns bool
+
+    abstract function iterator() returns HLIterator<int>
+    
+
+public class RecipeIngredientsUnordered extends RecipeIngredients
+    // map of item id to required count
+    protected let ingredients = new IterableMap<int, int>
+    
+    override function doesUnitSatisfy(unit u) returns bool
+        var satisfied = true
+        for itemId in ingredients
+            let reqCount = ingredients.get(itemId)
+            if u.getCountOfItem(itemId) < reqCount
+                satisfied = false
+        return satisfied
+    
+    override function removeFromUnit(unit u) returns bool
+        let satisfied = doesUnitSatisfy(u)
+        
+        return satisfied
+
+    override function iterator() returns HLIterator<int>
+        return ingredients.iterator()
+
+    // adds an ingredient that only requires one count
+    function addIngredient(int itemId)
+        skip
+        
+    // adds an ingredient with the given count requirement
+    function addIngredient(int itemId, int count)
+        skip
+
+
+public class RecipeIngredientsOrdered extends RecipeIngredients
+    protected itemReq array[6] slots
+
+    construct()
+        // initialize to nothing
+        for i = 0 to bj_MAX_INVENTORY - 1
+            slots[i] = itemReq(0, 0)
+    
+    override function iterator() returns HLIterator<int>
+        let hl = new HashList<int>()
+        for i = 0 to bj_MAX_INVENTORY - 1 
+            hl.add(slots[i].itemId)
+        return hl.iterator()
+
+    override function doesUnitSatisfy(unit u) returns bool
+        var satisfied = true
+        for i = 0 to u.inventorySize() - 1
+            if slots[i].itemId != 0 
+                let inSlot = u.itemInSlot(i)
+                if inSlot.getTypeId() != slots[i].itemId or inSlot.getCharges() < slots[i].count
+                    satisfied = false
+        return satisfied
+
+    override function removeFromUnit(unit u) returns bool
+        let satisfied = doesUnitSatisfy(u)
+        if satisfied
+            for i = 0 to u.inventorySize() - 1
+                let inSlot = u.itemInSlot(i)
+                if inSlot.getCharges() > slots[i].count
+                    inSlot.setCharges(inSlot.getCharges() - slots[i].count)
+                else
+                    inSlot.remove()
+                
+        return satisfied
+    
+    // Sets a slot to a given itemId with a count of 1 required in that slot
+    function setSlotIngredient(int slot, int itemId)
+        if slot > 5
+            error("Slot number needs to be valid")
+        slots[slot].itemId = itemId
+        slots[slot].count = 1
+
+    // Sets a slot to a given itemId with the given count required.
+    function setSlotIngredient(int slot, int itemId, int count)
+        setSlotIngredient(slot, itemId)
+        slots[slot].count = count
+        
+    function getSlotIngredient(int slot) returns itemReq
+        return slots[slot]
+
+/**
+*/
+public class Recipe
+    // An ID by which to reference this recipe.
+    int recipeId
+    // the produce item
+    int productId = 0
+    // Ingredients
+    RecipeIngredients ingredients
+    // Whether or not to execute this recipe on item aquire.
+    bool isAutomatic = false
+    AutomaticChecker checker = null
+
+    // Adds this recipe to the globals
+    private function addToGlobals()
+        RECIPE_MAP.put(recipeId, this)
+        for ingredientId in ingredients
+            if not ITEM_TO_RECIPE_MAP.has(ingredientId)
+                ITEM_TO_RECIPE_MAP.put(ingredientId, new LinkedList<int>)
+            ITEM_TO_RECIPE_MAP.get(ingredientId).add(recipeId)
+            
+    construct(int productId, RecipeIngredients ingredients)
+        recipeId = SECRECT_RECIPE_ID_GEN.next()
+        this.productId = productId
+        this.ingredients = ingredients
+        addToGlobals()
+
+    construct(int recipeId, int productId, RecipeIngredients ingredients)
+        this.recipeId = recipeId
+        this.productId = productId
+        this.ingredients = ingredients
+        addToGlobals()
+    
+    function setAutomaticCraft(bool doAutomatically)
+        isAutomatic = doAutomatically
+        // TODO remove/add to the auto trigger
+    
+    function setAutomaticCraft(AutomaticChecker checker)
+        this.checker = checker
+
+    function isAutomatic(unit u) returns bool
+        var result = isAutomatic
+        if not checker == null
+            result = checker.isAutomaticForUnit(u)
+        return result
+
+    /** Can the unit craft this item, looking at the ingredients required by
+        this recipe.
+     */ 
+    function canCraft(unit crafter) returns bool
+        return ingredients.doesUnitSatisfy(crafter)
+
+    /** Craft this recipe for the unit
+     */
+    function craft(unit crafter) returns bool
+        let craftable = canCraft(crafter)
+        if craftable
+            
+        return craftable
+
+    function craftOnGround(unit crafter, vec2 productPos)
+
+

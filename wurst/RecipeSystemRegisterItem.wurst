@@ -1,0 +1,15 @@
+package RecipeSystemRegisterItem
+
+/** Register an item for the system. */
+public function registerItem(int itemId, string name)
+    skip
+
+/** Register an item for the system with an description */
+public function registerItem(int itemId, string name, string description)
+    skip
+
+/** Register an item for the system and have the system generated an ItemDefinition
+    for the item. Requires a description.
+ */
+public function registerItemGen(int itemId, string name, string description, string icon)
+    skip

@@ -1,0 +1,21 @@
+package RecipeSystemGlobals
+
+import ObjectIdGenerator
+import HashMap
+import LinkedList
+import RecipeSystemItemInfo
+import initlater RecipeSystemRecipe
+
+
+/** Stores all of the item infos for the map
+ */
+public constant ITEM_INFO_MAP = new HashMap<int,ItemInfo>
+
+/** All of the recipes that the system has. RecipeId to Item.
+ */
+public constant RECIPE_MAP = new HashMap<int,Recipe>
+
+/** The map of items to recipes in which the item is used. Used for the 
+    automatic recipe system.
+ */
+public constant ITEM_TO_RECIPE_MAP = new HashMap<int,LinkedList<int>>

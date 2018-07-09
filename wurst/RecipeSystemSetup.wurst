@@ -1,0 +1,22 @@
+package RecipeSystemSetup
+
+import RegisterEvents
+import RecipeSystemGlobals
+import RecipeSystemConfig
+import RecipeSystemHandlePickup
+
+// Register all the events for the system
+function registerRecipeSystemEvents()
+    if doAutomaticRecipes
+        registerPlayerUnitEvent(EVENT_PLAYER_UNIT_PICKUP_ITEM, function handleItemPickup)
+    
+
+@compiletime
+function setup()
+    registerItems()
+    registerRecipes()
+    registerRecipeSystemEvents()
+
+init
+    setup()
+    

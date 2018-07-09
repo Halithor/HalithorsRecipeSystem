@@ -1,0 +1,88 @@
+package RecipeSystemRegisterRecipe
+
+import LinkedList
+import HashMap
+import RecipeSystemRecipe
+
+public constant NO_ITEM = 0
+
+tuple itemCount(int id, int count)    
+
+/**
+ */
+public function asIngredients(vararg int itemIds) returns RecipeIngredients
+    let ingredients =  new RecipeIngredientsUnordered()
+    for itemId in itemIds
+        ingredients.addIngredient(itemId)
+    return ingredients
+
+/** This creates an item ingredients using each pair of arguments as an item id
+    followed by a count of items needed. See the following example:
+    ```
+    asIngredientsCounted(
+        'hslv', 1,
+        'pclr', 2,
+        'rnec', 4
+    )
+    ```
+    This would be 1 healing salve, 2 clarity potions, and 4 rods of necromancy, 
+    with each charge on the rod counting for one count.
+ */
+public function asIngredientsCounted(vararg int itemsAndCounts) returns RecipeIngredients
+    
+    let ingredients = new RecipeIngredientsUnordered()
+    int itemId = 0
+    for idOrCount in itemsAndCounts
+        if itemId == 0
+            itemId = idOrCount
+        else
+            ingredients.addIngredient(itemId, idOrCount)
+            itemId = 0
+    return ingredients
+
+/**
+*/
+public function asIngredientsCounted(vararg itemCount itemsAndCounts) returns RecipeIngredients
+    let ingredients = new RecipeIngredientsUnordered()
+    for i in itemsAndCounts
+        ingredients.addIngredient(i.id, i.count)
+    return ingredients
+    
+/**
+*/
+public function asIngredientsOrdered(vararg int itemIds) returns RecipeIngredients
+    let ingredients = new RecipeIngredientsOrdered()
+    var slot = 0
+    for id in itemIds
+        ingredients.setSlotIngredient(slot, id)
+        slot++
+    return ingredients
+
+/**
+*/
+public function asIngredientsOrderedCounted(vararg itemCount itemsAndCounts) returns RecipeIngredients
+    let ingredients = new RecipeIngredientsOrdered()
+    var slot = 0
+    for pair in itemsAndCounts
+        ingredients.setSlotIngredient(slot, pair.id, pair.count)
+        slot++
+    return ingredients
+
+/** Registers a recipe with the system using the given recipeId, produced item id,
+    and the list of component items
+ */
+public function registerRecipe(int recipeId, int productId, RecipeIngredients ingredients) returns Recipe
+    return new Recipe(recipeId, productId, ingredients)
+
+
+/** Registers a recipe with the system generating an id, produced item id,
+    and the list of component items
+ */
+public function registerRecipe(int productId, RecipeIngredients ingredients) returns Recipe
+    return new Recipe(productId, ingredients)
+
+public function registerRecipeNoProduct(int recipeId, RecipeIngredients ingredients) returns Recipe
+    return new Recipe(recipeId, NO_ITEM, ingredients)
+
+public function registerRecipeNoProduct(RecipeIngredients ingredients) returns Recipe
+    return new Recipe(NO_ITEM, ingredients)

@@ -1,0 +1,25 @@
+package RecipeSystemHandlePickup
+
+import RecipeSystemGlobals
+import RecipeSystem
+import RecipeSystemConfig
+import RecipeSystemUtil
+
+public function handleItemPickup()
+    let itm = GetManipulatedItem()
+    let itemId = itm.getTypeId()
+    let user = GetManipulatingUnit()
+    let charges = itm.getCharges()
+    let itemInfo = ITEM_INFO_MAP.get(itemId)
+    let stackLimit = itemInfo.getStackLimit(user)
+    if stackLimit <= 0
+        // Drop this item, can't carry
+        user.dropItemPoint(itm, user.getPos())
+        // TODO warn user they can't carry the item
+
+    if doItemStacking
+        user.stackItemsOfType(itemId)
+        
+    // Find all recipes containing this item, check for combos that are automatic.
+    user.recipeCraftAny()
+            

@@ -1,0 +1,57 @@
+package RecipeSystem
+
+import ObjectIdGenerator
+import RecipeSystemRecipe
+import RecipeSystemGlobals
+import LinkedList
+
+/** Interface for filtering recipes that can be crafted. */
+interface RecipeFilter
+    function passesFilter(Recipe recipe, unit crafter) returns bool
+
+/** Generates a new Recipe Id for you. Useful for creating constants that reference
+    your recipes.
+ */
+public constant RECIPE_ID_GEN = new IdGenerator('IR00')
+
+/** Checks to see if a given recipe can be crafted for a unit.
+ */
+public function unit.recipeCanCraft(int recipeId) returns boolean
+    return RECIPE_MAP.get(recipeId).canCraft(this)
+
+/** Attemps to craft a given recipe for a unit. Returns whether or not it was 
+    successful.
+ */
+public function unit.recipeCraft(int recipeId) returns boolean
+    return RECIPE_MAP.get(recipeId).craft(this)
+
+/** Attempts to craft any recipe registered in the system that the unit has the
+    ingredients to craft. If more than one recipe can be crafted, a semi-random
+    one will be selected.
+
+    Returns whether a recipe was crafted or not.
+ */
+public function unit.recipeCraftAny() returns boolean
+    return this.recipeCraftAny((_, _u) -> true)
+
+public function unit.recipeCraftAutomatic() returns boolean
+    return this.recipeCraftAny((rec, crafter) -> rec.isAutomatic(crafter))
+
+/** The same as the other version, except the filter needs to approve the recipe
+    for the unit to craft. Useful for limiting the recipes available for a given
+    unit.
+ */
+public function unit.recipeCraftAny(RecipeFilter filter) returns boolean
+    var itemCrafted = false
+    for i = 0 to bj_MAX_INVENTORY - 1
+        if not itemCrafted
+            let itemId = this.itemInSlot(i).getTypeId()
+            for LinkedList<int> recipeList in ITEM_TO_RECIPE_MAP.get(itemId)
+                if not itemCrafted
+                    for recipeId in recipeList
+                        if not itemCrafted
+                            let recipe = RECIPE_MAP.get(recipeId)
+                            if filter.passesFilter(recipe, this)
+                                itemCrafted = recipe.craft(this)
+                    
+    return itemCrafted

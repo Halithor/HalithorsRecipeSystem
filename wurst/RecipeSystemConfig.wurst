@@ -1,0 +1,33 @@
+package RecipeSystemConfig
+
+import ObjectIdGenerator
+
+
+/** Will some recipes be automatic when an item is picked up? Only set this to 
+    false if you plan to manually craft every single recipe. Use the 
+    `Recipe.setAutomaticCraft()` method to activate craft on item acquire for a
+    recipe.
+*/
+public constant doAutomaticRecipes = true
+
+/** Whether or not to stack items. Only turn this to false if no items are 
+    registered as stacking.
+ */
+public constant doItemStacking = true
+
+
+
+
+/** Use this function to register all items with their descriptions. Doing this 
+    is optional, but this can be used to automatically generate in-game error
+    messages, debug errors, item tooltips, and create simple items for you.
+    
+ */
+@configurable public function registerItems()
+    skip
+
+/** Use this function to register all recipes in the game. Registering a recipe
+    will make it's usage available to 
+ */
+@configurable public function registerRecipes()
+    skip

@@ -1,0 +1,51 @@
+package RecipeSystemUtil
+
+import RecipeSystemGlobals
+public function unit.getChargesOfItem(int itemId) returns int
+    int count = 0
+    for i = 0 to this.inventorySize() - 1
+        if this.itemInSlot(i).getTypeId() == itemId
+            count += this.itemInSlot(i).getCharges()
+    return count
+
+public function unit.getEmptyInventorySlots() returns int
+    var count = 0
+    for i = 0 to this.inventorySize() - 1
+        if this.itemInSlot(i) == null
+            count++
+    return count
+
+/** Stacks all of the items of the given type for the unit, respecting the max 
+    stack size for the unit. Drops any left overs on the ground.
+*/
+public function unit.stackItemsOfType(int itemId)
+    let itemInfo = ITEM_INFO_MAP.get(itemId)
+    let stackMax = itemInfo.getStackLimit(this)
+    var chargesLeft = this.getChargesOfItem(itemId)
+    for i = 0 to this.inventorySize() - 1
+        let slotItm = this.itemInSlot(i)
+        if not slotItm == null and slotItm.getTypeId() == itemId
+            if chargesLeft <= 0
+                // remove this item, as we've put the charges elsewhere
+                slotItm.remove()
+            else 
+                // we have charges to put here.
+                let slotCharges = min(chargesLeft, stackMax)
+                chargesLeft -= slotCharges
+                slotItm.setCharges(slotCharges)
+    if chargesLeft > 0
+        // we have more charges to give this unit, but we need a new item.
+        var emptySlots = this.getEmptyInventorySlots()
+        while emptySlots > 0 and chargesLeft > 0
+            let slotCharges = min(chargesLeft, stackMax)
+            chargesLeft -= slotCharges
+            this.addItemById(itemId)
+                ..setCharges(slotCharges)
+            emptySlots--
+        if chargesLeft > 0
+            // One last time, we now need to drop the rest on the ground at the 
+            // feet of this unit
+            createItem(itemId, this.getPos())
+                .setCharges(chargesLeft)
+
+                

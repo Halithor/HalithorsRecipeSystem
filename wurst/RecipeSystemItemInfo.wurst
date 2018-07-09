@@ -1,0 +1,35 @@
+package RecipeSystemItemInfo
+
+interface ItemStackLimit
+    function getStackLimit(int itemId, unit manipulator) returns int
+
+// Contains information about an item in the system
+public class ItemInfo
+    int itemId = 0
+    bool stacking = false
+    int stackLimitDefault = 1
+    // The function that can determine the number of items the unit can carry
+    ItemStackLimit stackLimit = null
+
+    construct(int itemId)
+        this.itemId = itemId
+
+    construct(int itemId, int stackLimit)
+        this.itemId = itemId
+        this.stacking = true
+        this.stackLimitDefault = stackLimit
+
+    construct(int itemId, ItemStackLimit stackLimit)
+        this.itemId = itemId
+        this.stacking = true
+        this.stackLimit = stackLimit
+    
+    function getStackLimit(unit manipulator) returns int
+        var result = 1
+        if stacking
+            if stackLimit == null
+                result = stackLimitDefault
+            else
+                result = stackLimit.getStackLimit(itemId, manipulator)
+        return result
+        
