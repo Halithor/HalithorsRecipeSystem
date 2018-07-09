@@ -1,0 +1,72 @@
+package Demo
+
+import ObjectIdGenerator
+import ItemObjEditing
+import Assets
+
+public constant ITEM_ID_WOOD = compiletime(ITEM_ID_GEN.next())
+public constant ITEM_ID_STICK = compiletime(ITEM_ID_GEN.next())
+public constant ITEM_ID_STONE = compiletime(ITEM_ID_GEN.next())
+public constant ITEM_ID_AXE = compiletime(ITEM_ID_GEN.next())
+public constant ITEM_ID_SHIELD = compiletime(ITEM_ID_GEN.next())
+
+
+init
+    let regionSize = 500
+    let centerPos = GetEntireMapRect().getCenter()
+    let centerOfMap = Rect(centerPos.x - regionSize, centerPos.y - regionSize, centerPos.x + regionSize, centerPos.y + regionSize)
+    for i = 0 to 15
+        createItem(ITEM_ID_WOOD, centerOfMap.randomPoint())
+        createItem(ITEM_ID_STONE, centerOfMap.randomPoint())
+
+@compiletime
+function genItems()
+    new ItemDefinition(ITEM_ID_WOOD, 'ches')
+        ..setName("Wood")
+        ..setTooltipBasic("Wood")
+        ..setDescription("It's a log.")
+        ..setTooltipExtended("It's a log.")
+        ..setInterfaceIcon(Icons.bTNEatTree)
+        ..setNumberofCharges(1)
+        ..setAbilities("")
+        ..setGoldCost(0)
+        ..setModelUsed(Doodads.felwoodLogStraight)
+        ..setScalingValue(0.33)
+    new ItemDefinition(ITEM_ID_STICK, 'ches')
+        ..setName("Stick")
+        ..setTooltipBasic("Stick")
+        ..setDescription("A smallish log, useful for poking things with.")
+        ..setTooltipExtended("A smallish log, useful for poking things with.")
+        ..setInterfaceIcon(Icons.bTNAlleriaFlute)
+        ..setNumberofCharges(1)
+        ..setGoldCost(0)
+    new ItemDefinition(ITEM_ID_STONE, 'ches')
+        ..setName("Stone")
+        ..setTooltipBasic("Stone")
+        ..setDescription("A large rock.")
+        ..setTooltipExtended("A large rock.")
+        ..setInterfaceIcon(Icons.bTNGolemThunderClap)
+        ..setNumberofCharges(1)
+        ..setGoldCost(0)
+        ..setModelUsed("Doodads\\LordaeronSummer\\Rocks\\Lords_Rock\\Lords_Rock2.mdl")
+        ..setScalingValue(0.7)
+    new ItemDefinition(ITEM_ID_AXE, 'ches')
+        ..setName("Stone Axe")
+        ..setTooltipBasic("Stone Axe")
+        ..setDescription("A simple axe made from stone.\n|caaaaaa+10 Damage")
+        ..setTooltipExtended("A simple axe made from stone.\n|caaaaaa+10 Damage")
+        ..setInterfaceIcon(Icons.bTNOrcMeleeUpOne)
+        ..setNumberofCharges(0)
+        ..setGoldCost(4)
+        ..setAbilities("AItn")
+    new ItemDefinition(ITEM_ID_SHIELD, 'ches')
+        ..setName("Wooden Shield")
+        ..setTooltipBasic("Wooden Shield")
+        ..setDescription("A basic round wooden shield.\n|caaaaaa+5 Armor")
+        ..setTooltipExtended("A basic round wooden shield.\n|caaaaaa+5 Armor")
+        ..setInterfaceIcon(Icons.bTNSteelArmor)
+        ..setNumberofCharges(0)
+        ..setGoldCost(4)
+        ..setAbilities("AId5")
+    
+    
