@@ -1,5 +1,8 @@
 package RecipeSystemConfig
 
+import public RecipeSystemRegisterItem
+import public RecipeSystemRegisterRecipe
+
 /** Will some recipes be automatic when an item is picked up? Only set this to 
     false if you plan to manually craft every single recipe. Use the 
     `Recipe.setAutomaticCraft()` method to activate craft on item acquire for a
