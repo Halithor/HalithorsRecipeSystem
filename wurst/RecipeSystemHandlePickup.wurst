@@ -10,16 +10,18 @@ public function handleItemPickup()
     let itemId = itm.getTypeId()
     let user = GetManipulatingUnit()
     let itemInfo = ITEM_INFO_MAP.get(itemId)
-    let stackLimit = itemInfo.getStackLimit(user)
-    if stackLimit <= 0
-        // Drop this item, can't carry
-        user.dropItemPoint(itm, user.getPos())
-        // TODO warn user they can't carry the item
-    else
-        // we can carry this item, so stack it and craft it.
-        if doItemStacking and itemInfo.isStacking()
-            user.stackItemsOfType(itemId)
-            
-        // Find all recipes containing this item, check for combos that are automatic.
-        user.recipeCraftAutomatic()
+    // make sure this item is in the system.
+    if not itemInfo == null
+        let stackLimit = itemInfo.getStackLimit(user)
+        if stackLimit <= 0
+            // Drop this item, can't carry
+            user.dropItemPoint(itm, user.getPos())
+            // TODO warn user they can't carry the item
+        else
+            // we can carry this item, so stack it and craft it.
+            if doItemStacking and itemInfo.isStacking()
+                user.stackItemsOfType(itemId)
+                
+            // Find all recipes containing this item, check for combos that are automatic.
+            user.recipeCraftAutomatic()
             

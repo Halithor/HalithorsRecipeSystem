@@ -89,25 +89,30 @@ public class RecipeIngredientsUnordered extends RecipeIngredients
 
 
 public class RecipeIngredientsOrdered extends RecipeIngredients
-    protected itemReq array[6] slots
+    // protected itemReq array[6] slots
+    protected int array[6] itemIds
+    protected int array[6] itemCounts
 
     construct()
         // initialize to nothing
         for i = 0 to bj_MAX_INVENTORY - 1
-            slots[i] = itemReq(0, 0)
+            // slots[i] = itemReq(0, 0)
+            itemIds[i] = 0
+            itemCounts[i] = 0
     
     override function iterator() returns HLIterator<int>
         let hl = new HashList<int>()
         for i = 0 to bj_MAX_INVENTORY - 1 
-            hl.add(slots[i].itemId)
+            if itemIds[i] != 0
+                hl.add(itemIds[i])
         return hl.iterator()
 
     override function doesUnitSatisfy(unit u) returns bool
         var satisfied = true
         for i = 0 to u.inventorySize() - 1
-            if slots[i].itemId != 0 
+            if itemIds[i] != 0 
                 let inSlot = u.itemInSlot(i)
-                if inSlot.getTypeId() != slots[i].itemId or inSlot.getCharges() < slots[i].count
+                if inSlot.getTypeId() != itemIds[i] or inSlot.getCharges() < itemCounts[i]
                     satisfied = false
         return satisfied
 
@@ -116,8 +121,8 @@ public class RecipeIngredientsOrdered extends RecipeIngredients
         if satisfied
             for i = 0 to u.inventorySize() - 1
                 let inSlot = u.itemInSlot(i)
-                if inSlot.getCharges() > slots[i].count
-                    inSlot.setCharges(inSlot.getCharges() - slots[i].count)
+                if inSlot.getCharges() > itemCounts[i]
+                    inSlot.setCharges(inSlot.getCharges() - itemCounts[i])
                 else
                     inSlot.remove()
                 
@@ -127,16 +132,16 @@ public class RecipeIngredientsOrdered extends RecipeIngredients
     function setSlotIngredient(int slot, int itemId)
         if slot > 5
             error("Slot number needs to be valid")
-        slots[slot].itemId = itemId
-        slots[slot].count = 1
+        itemIds[slot] = itemId
+        itemCounts[slot] = 1
 
     // Sets a slot to a given itemId with the given count required.
     function setSlotIngredient(int slot, int itemId, int count)
         setSlotIngredient(slot, itemId)
-        slots[slot].count = count
+        itemCounts[slot] = count
         
-    function getSlotIngredient(int slot) returns itemReq
-        return slots[slot]
+    function getSlotIngredient(int slot) returns int
+        return itemIds[slot]
 
 /**
 */

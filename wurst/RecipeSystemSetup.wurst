@@ -14,7 +14,8 @@ function registerRecipeSystemEvents()
 function setup()
     registerItems()
     registerRecipes()
-    registerRecipeSystemEvents()
+    if not compiletime
+        registerRecipeSystemEvents()
 
 init
     setup()
