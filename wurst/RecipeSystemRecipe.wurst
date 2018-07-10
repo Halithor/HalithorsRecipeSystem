@@ -160,9 +160,10 @@ public class Recipe
     private function addToGlobals()
         RECIPE_MAP.put(recipeId, this)
         for ingredientId in ingredients
-            if not ITEM_TO_RECIPE_MAP.has(ingredientId)
-                ITEM_TO_RECIPE_MAP.put(ingredientId, new LinkedList<int>)
-            ITEM_TO_RECIPE_MAP.get(ingredientId).add(recipeId)
+            if not ingredientId == 0 
+                if not ITEM_TO_RECIPE_MAP.has(ingredientId)
+                    ITEM_TO_RECIPE_MAP.put(ingredientId, new LinkedList<int>())
+                ITEM_TO_RECIPE_MAP.get(ingredientId).add(recipeId)
             
     construct(int productId, RecipeIngredients ingredients)
         recipeId = SECRECT_RECIPE_ID_GEN.next()

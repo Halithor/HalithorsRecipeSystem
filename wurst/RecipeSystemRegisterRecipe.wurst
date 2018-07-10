@@ -4,7 +4,7 @@ import RecipeSystemRecipe
 
 public constant NO_ITEM = 0
 
-tuple itemCount(int id, int count)    
+public tuple itemCount(int id, int count)    
 
 /**
  */
