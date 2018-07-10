@@ -78,6 +78,17 @@ public function unit.stackItem(item itm)
     for i = 0 to this.inventorySize() - 1
         let slotItm = this.itemInSlot(i)
         if not slotItm == null and slotItm.getTypeId() == itemId
+            if slotItm == itm
+                // this is the item we're adding, if we have already stacked all
+                // of its charges remove it.
+                if chargesLeft <= 0
+                    slotItm.remove()
+                else 
+                    // Otherwise, give it as many charges as you can
+                    let charges = min(stackMax, chargesLeft)
+                    slotItm.setCharges(charges)
+                    chargesLeft -= charges
+                    
             if slotItm.getCharges() < stackMax
                 // add some charges to this item
                 let chargesAdded = min(stackMax - slotItm.getCharges(), chargesLeft)
