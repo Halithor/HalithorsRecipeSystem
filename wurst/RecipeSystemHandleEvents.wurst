@@ -66,6 +66,15 @@ public function handleOrders()
                         manipulator.addItemHandle(splitter)
                         manipulator.stackItem(splitter, movedItm)
                         activeUnits.remove(manipulator)
+                    else
+                        // extra check to see if there's another stack in the unit's inventory to put the split in.
+                        var stillWaiting = true
+                        for i = 0 to manipulator.inventorySize() - 1
+                            let slotItm = manipulator.itemInSlot(i)
+                            if stillWaiting and slotItm.getTypeId() == movedItm.getTypeId() and not slotItm == movedItm
+                                slotItm.setCharges(slotItm.getCharges() + 1)
+                                splitter.remove()
+                                stillWaiting = false
             else if targetItem.getTypeId() == movedItm.getTypeId()
                 // Same item types, so try to stack them.
                 let targetCharges = targetItem.getCharges()
