@@ -78,6 +78,10 @@ public function handleOrders()
                         targetItem.remove()
                     else
                         targetItem.setCharges(chargesLeft)
+
+        // Since we moved the items, some recipes could be satisfied so we need
+        // to try the automatic recipes
+        manipulator.recipeCraftAutomatic()
                     
 
                     
