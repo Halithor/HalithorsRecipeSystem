@@ -1,0 +1,81 @@
+package RecipeSystemHandleEvents
+
+import RecipeSystemGlobals
+import RecipeSystem
+import RecipeSystemConfig
+import RecipeSystemUtil
+import HashList
+import Orders
+
+constant HashList<unit> activeUnits = new HashList<unit>
+
+public function handleItemPickup()
+    let itm = GetManipulatedItem()
+    let itemId = itm.getTypeId()
+    let user = GetManipulatingUnit()
+    let itemInfo = ITEM_INFO_MAP.get(itemId)
+    
+    // make sure this item is in the system.
+    if not itemInfo == null and not activeUnits.has(user)
+        // add to the active units so that this doesn't keep looping forever
+        activeUnits.add(user)
+        let stackLimit = itemInfo.getStackLimit(user)
+        if stackLimit <= 0
+            // Drop this item, can't carry
+            user.dropItemPoint(itm, user.getPos())
+            // TODO warn user they can't carry the item
+        else
+            // we can carry this item, so stack it and craft it.
+            if doItemStacking and itemInfo.isStacking()
+                user.stackItem(itm, null)
+                
+            // Find all recipes containing this item, check for combos that are automatic.
+            user.recipeCraftAutomatic()
+        // remove from the active users
+        activeUnits.remove(user)
+
+
+/** Handles orders issued to the unit and does the actions for stack splitting
+    and combining.
+ */
+public function handleOrders()
+    let order = GetIssuedOrderId()
+    // Look for move orders and react 
+    if order >= SpecialOrders.itemdrag00 and order <= SpecialOrders.itemdrag05
+        let manipulator = GetTriggerUnit()
+        let movedItm = GetOrderTargetItem()
+        let _slotFrom = manipulator.getItemSlot(movedItm)
+        let slotTo = order - SpecialOrders.itemdrag00
+        let targetItem = manipulator.itemInSlot(slotTo)
+
+        if not targetItem == null
+            // If there's a target we can do something
+            if targetItem == movedItm
+                // The item has been dropped on itself, so lets try to split it.
+                
+                movedItm.setCharges(movedItm.getCharges() - 1)   
+                let splitter = createItem(movedItm.getTypeId(), manipulator.getPos())
+                        ..setCharges(1)
+                if manipulator.getEmptyInventorySlots() > 0
+                    // if there's a slot open put it in the inventory and stack it, ignoring the parent.
+                    manipulator.addItemHandle(splitter)
+                    manipulator.stackItem(splitter, movedItm)
+            else if targetItem.getTypeId() == movedItm.getTypeId()
+                // Same item types, so try to stack them.
+                let targetCharges = targetItem.getCharges()
+                let fromCharges = movedItm.getCharges()
+                let itemInfo = ITEM_INFO_MAP.get(movedItm.getTypeId())
+                let stackMax = itemInfo.getStackLimit(manipulator)
+                if targetCharges < stackMax
+                    // we can stack them!
+                    let chargesToAdd = min(stackMax - targetCharges, fromCharges)
+                    // switch the items being effected, because they are switching slots.
+                    movedItm.setCharges(targetCharges + chargesToAdd)
+                    let chargesLeft = fromCharges - chargesToAdd
+                    if chargesLeft <= 0
+                        targetItem.remove()
+                    else
+                        targetItem.setCharges(chargesLeft)
+                    
+
+                    

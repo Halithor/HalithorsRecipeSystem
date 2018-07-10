@@ -2,21 +2,23 @@ package RecipeSystemSetup
 
 import RegisterEvents
 import RecipeSystemConfig
-import RecipeSystemHandlePickup
+import RecipeSystemHandleEvents
 
 // Register all the events for the system
 function registerRecipeSystemEvents()
-    if doAutomaticRecipes
-        registerPlayerUnitEvent(EVENT_PLAYER_UNIT_PICKUP_ITEM, function handleItemPickup)
-    
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_PICKUP_ITEM, function handleItemPickup)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_ORDER, function handleOrders)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> function handleOrders)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, () -> function handleOrders)
+
 
 @compiletime
 function setup()
     registerItems()
     registerRecipes()
-    if not compiletime
-        registerRecipeSystemEvents()
+        
 
 init
     setup()
+    registerRecipeSystemEvents()
     

@@ -69,8 +69,10 @@ public function unit.stackItemsOfType(int itemId)
 /** Takes a specific item and attempts to add it to another stack in your 
     inventory. This function does not compile all of your stacks into one, 
     allowing the manipulating unit to maintain separate, non-maxed stacks.
+
+    Will not place charges into parent (for stack splitting)
  */
-public function unit.stackItem(item itm)
+public function unit.stackItem(item itm, item parent)
     let itemId = itm.getTypeId()
     let itemInfo = ITEM_INFO_MAP.get(itemId)
     let stackMax = itemInfo.getStackLimit(this)
@@ -87,10 +89,9 @@ public function unit.stackItem(item itm)
                     // Otherwise, give it as many charges as you can
                     let charges = min(stackMax, chargesLeft)
                     slotItm.setCharges(charges)
-                    chargesLeft -= charges
-                    
-            if slotItm.getCharges() < stackMax
-                // add some charges to this item
+                    chargesLeft -= charges   
+            else if not slotItm == parent and slotItm.getCharges() < stackMax
+                // add some charges to this item, as long as it's not the parent
                 let chargesAdded = min(stackMax - slotItm.getCharges(), chargesLeft)
                 slotItm.setCharges(slotItm.getCharges() + chargesAdded)
                 chargesLeft -= chargesAdded
