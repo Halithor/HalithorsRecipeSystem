@@ -41,19 +41,19 @@ public function unit.recipeCraftAutomatic() returns item
     for the unit to craft. Useful for limiting the recipes available for a given
     unit.
  */
-public function unit.recipeCraftAny(RecipeFilter filter) returns item
+ public function unit.recipeCraftAny(RecipeFilter filter) returns item
     var itemCrafted = false
     item crafted = null
     for i = 0 to bj_MAX_INVENTORY - 1
         if not itemCrafted
             let itemId = this.itemInSlot(i).getTypeId()
-            for LinkedList<int> recipeList in ITEM_TO_RECIPE_MAP.get(itemId)
-                if not itemCrafted
-                    for recipeId in recipeList
-                        if not itemCrafted
-                            let recipe = RECIPE_MAP.get(recipeId)
-                            if filter.passesFilter(recipe, this)
-                                crafted = recipe.craft(this)
-                                itemCrafted = crafted != null
+            let recipeList = ITEM_TO_RECIPE_MAP.get(itemId)
+            if not recipeList == null
+                for recipeId in recipeList
+                    if not itemCrafted
+                        let recipe = RECIPE_MAP.get(recipeId)
+                        if filter.passesFilter(recipe, this)
+                            crafted = recipe.craft(this)
+                            itemCrafted = crafted != null
                                 
     return crafted
