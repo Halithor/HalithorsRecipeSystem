@@ -47,10 +47,11 @@ public function handleOrders()
         let _slotFrom = manipulator.getItemSlot(movedItm)
         let slotTo = order - SpecialOrders.itemdrag00
         let targetItem = manipulator.itemInSlot(slotTo)
-
-        if not targetItem == null
+        let itemInfo = ITEM_INFO_MAP.get(movedItm.getTypeId())
+        // Make sure item info isn't null, and therefore the item is registered.
+        if not targetItem == null and not itemInfo == null
             // If there's a target we can do something
-            if targetItem == movedItm
+            if targetItem == movedItm and movedItm.getCharges() > 1
                 // The item has been dropped on itself, so lets try to split it.
                 
                 movedItm.setCharges(movedItm.getCharges() - 1)   
@@ -64,7 +65,6 @@ public function handleOrders()
                 // Same item types, so try to stack them.
                 let targetCharges = targetItem.getCharges()
                 let fromCharges = movedItm.getCharges()
-                let itemInfo = ITEM_INFO_MAP.get(movedItm.getTypeId())
                 let stackMax = itemInfo.getStackLimit(manipulator)
                 if targetCharges < stackMax
                     // we can stack them!

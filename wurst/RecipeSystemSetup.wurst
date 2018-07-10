@@ -8,8 +8,8 @@ import RecipeSystemHandleEvents
 function registerRecipeSystemEvents()
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_PICKUP_ITEM, function handleItemPickup)
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_ORDER, function handleOrders)
-    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> function handleOrders)
-    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, () -> function handleOrders)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, function handleOrders)
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER, function handleOrders)
 
 
 @compiletime
