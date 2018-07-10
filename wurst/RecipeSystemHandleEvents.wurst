@@ -51,16 +51,18 @@ public function handleOrders()
         // Make sure item info isn't null, and therefore the item is registered.
         if not targetItem == null and not itemInfo == null
             // If there's a target we can do something
-            if targetItem == movedItm and movedItm.getCharges() > 1
+            if targetItem == movedItm
                 // The item has been dropped on itself, so lets try to split it.
-                
-                movedItm.setCharges(movedItm.getCharges() - 1)   
-                let splitter = createItem(movedItm.getTypeId(), manipulator.getPos())
-                        ..setCharges(1)
-                if manipulator.getEmptyInventorySlots() > 0
-                    // if there's a slot open put it in the inventory and stack it, ignoring the parent.
-                    manipulator.addItemHandle(splitter)
-                    manipulator.stackItem(splitter, movedItm)
+                if movedItm.getCharges() > 1
+                    movedItm.setCharges(movedItm.getCharges() - 1)   
+                    let splitter = createItem(movedItm.getTypeId(), manipulator.getPos())
+                            ..setCharges(1)
+                    if manipulator.getEmptyInventorySlots() > 0
+                        // if there's a slot open put it in the inventory and stack it, ignoring the parent.
+                        activeUnits.add(manipulator)
+                        manipulator.addItemHandle(splitter)
+                        manipulator.stackItem(splitter, movedItm)
+                        activeUnits.remove(manipulator)
             else if targetItem.getTypeId() == movedItm.getTypeId()
                 // Same item types, so try to stack them.
                 let targetCharges = targetItem.getCharges()
