@@ -120,11 +120,12 @@ public class RecipeIngredientsOrdered extends RecipeIngredients
         let satisfied = doesUnitSatisfy(u)
         if satisfied
             for i = 0 to u.inventorySize() - 1
-                let inSlot = u.itemInSlot(i)
-                if inSlot.getCharges() > itemCounts[i]
-                    inSlot.setCharges(inSlot.getCharges() - itemCounts[i])
-                else
-                    inSlot.remove()
+                if itemIds[i] != 0
+                    let inSlot = u.itemInSlot(i)
+                    if inSlot.getCharges() > itemCounts[i]
+                        inSlot.setCharges(inSlot.getCharges() - itemCounts[i])
+                    else
+                        inSlot.remove()
                 
         return satisfied
     

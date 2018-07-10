@@ -25,15 +25,17 @@ public function handleItemPickup()
             // Drop this item, can't carry
             user.dropItemPoint(itm, user.getPos())
             // TODO warn user they can't carry the item
+            activeUnits.remove(user)
         else
             // we can carry this item, so stack it and craft it.
             if doItemStacking and itemInfo.isStacking()
                 user.stackItem(itm, null)
-                
+            // Remove here because we want to be able to have crafting happen repeatedly
+            activeUnits.remove(user)
             // Find all recipes containing this item, check for combos that are automatic.
             user.recipeCraftAutomatic()
         // remove from the active users
-        activeUnits.remove(user)
+        
 
 
 /** Handles orders issued to the unit and does the actions for stack splitting
