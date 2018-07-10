@@ -90,8 +90,8 @@ public class RecipeIngredientsUnordered extends RecipeIngredients
 
 public class RecipeIngredientsOrdered extends RecipeIngredients
     // protected itemReq array[6] slots
-    protected int array[6] itemIds
-    protected int array[6] itemCounts
+    protected int array[bj_MAX_INVENTORY] itemIds
+    protected int array[bj_MAX_INVENTORY] itemCounts
 
     construct()
         // initialize to nothing
@@ -159,7 +159,8 @@ public class Recipe
     // Adds this recipe to the globals
     private function addToGlobals()
         RECIPE_MAP.put(recipeId, this)
-        for ingredientId in ingredients
+        let iterator = ingredients.iterator()
+        for ingredientId from iterator
             if not ingredientId == 0 
                 if not ITEM_TO_RECIPE_MAP.has(ingredientId)
                     ITEM_TO_RECIPE_MAP.put(ingredientId, new LinkedList<int>())

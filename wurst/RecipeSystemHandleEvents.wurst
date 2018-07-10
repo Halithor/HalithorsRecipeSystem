@@ -6,6 +6,7 @@ import RecipeSystemConfig
 import RecipeSystemUtil
 import HashList
 import Orders
+import ClosureTimers
 
 constant HashList<unit> activeUnits = new HashList<unit>
 
@@ -80,8 +81,9 @@ public function handleOrders()
                         targetItem.setCharges(chargesLeft)
 
         // Since we moved the items, some recipes could be satisfied so we need
-        // to try the automatic recipes
-        manipulator.recipeCraftAutomatic()
+        // to try the automatic recipes. Needs timeout for item slot switch
+        doAfter(0.01) ->
+            manipulator.recipeCraftAutomatic()
                     
 
                     
