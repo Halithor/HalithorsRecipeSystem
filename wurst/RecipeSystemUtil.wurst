@@ -27,8 +27,27 @@ public function unit.getEmptyInventorySlots() returns int
             count++
     return count
 
+// helper function for the end of stacking.
+function unit.createNewItems(int itemId, int chargesLeftover, int stackMax)
+    var chargesLeft = chargesLeftover
+    if chargesLeft > 0
+        // we have more charges to give this unit, but we need a new item.
+        var emptySlots = this.getEmptyInventorySlots()
+        while emptySlots > 0 and chargesLeft > 0
+            let slotCharges = min(chargesLeft, stackMax)
+            chargesLeft -= slotCharges
+            this.addItemById(itemId)
+                ..setCharges(slotCharges)
+            emptySlots--
+        if chargesLeft > 0
+            // One last time, we now need to drop the rest on the ground at the 
+            // feet of this unit
+            createItem(itemId, this.getPos())
+                .setCharges(chargesLeft)
+
 /** Stacks all of the items of the given type for the unit, respecting the max 
-    stack size for the unit. Drops any left overs on the ground.
+    stack size for the unit. Drops any left overs on the ground. Compiles all 
+    charges into the highest number of chargers per stack that it can.
 */
 public function unit.stackItemsOfType(int itemId)
     let itemInfo = ITEM_INFO_MAP.get(itemId)
@@ -45,19 +64,31 @@ public function unit.stackItemsOfType(int itemId)
                 let slotCharges = min(chargesLeft, stackMax)
                 chargesLeft -= slotCharges
                 slotItm.setCharges(slotCharges)
-    if chargesLeft > 0
-        // we have more charges to give this unit, but we need a new item.
-        var emptySlots = this.getEmptyInventorySlots()
-        while emptySlots > 0 and chargesLeft > 0
-            let slotCharges = min(chargesLeft, stackMax)
-            chargesLeft -= slotCharges
-            this.addItemById(itemId)
-                ..setCharges(slotCharges)
-            emptySlots--
-        if chargesLeft > 0
-            // One last time, we now need to drop the rest on the ground at the 
-            // feet of this unit
-            createItem(itemId, this.getPos())
-                .setCharges(chargesLeft)
+    this.createNewItems(itemId, chargesLeft, stackMax)
+
+/** Takes a specific item and attempts to add it to another stack in your 
+    inventory. This function does not compile all of your stacks into one, 
+    allowing the manipulating unit to maintain separate, non-maxed stacks.
+ */
+public function unit.stackItem(item itm)
+    let itemId = itm.getTypeId()
+    let itemInfo = ITEM_INFO_MAP.get(itemId)
+    let stackMax = itemInfo.getStackLimit(this)
+    var chargesLeft = itm.getCharges()
+    for i = 0 to this.inventorySize() - 1
+        let slotItm = this.itemInSlot(i)
+        if not slotItm == null and slotItm.getTypeId() == itemId
+            if slotItm.getCharges() < stackMax
+                // add some charges to this item
+                let chargesAdded = min(stackMax - slotItm.getCharges(), chargesLeft)
+                slotItm.setCharges(slotItm.getCharges() + chargesAdded)
+                chargesLeft -= chargesAdded
+    // We've tried to add to every item in the inventory, if we have charges left
+    // create an item.
+    this.createNewItems(itemId, chargesLeft, stackMax)
+    
+
+
+        
 
                 

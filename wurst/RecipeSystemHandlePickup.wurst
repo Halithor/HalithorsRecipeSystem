@@ -26,7 +26,7 @@ public function handleItemPickup()
         else
             // we can carry this item, so stack it and craft it.
             if doItemStacking and itemInfo.isStacking()
-                user.stackItemsOfType(itemId)
+                user.stackItem(itm)
                 
             // Find all recipes containing this item, check for combos that are automatic.
             user.recipeCraftAutomatic()
