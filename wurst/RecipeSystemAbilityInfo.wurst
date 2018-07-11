@@ -1,5 +1,0 @@
-package RecipeSystemAbilityInfo
-
-public class AbilityInfo
-    int abilityId
-    
