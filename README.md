@@ -7,7 +7,7 @@ maps made for Warcraft III using the [Wurst language](https://wurstlang.org/).
 - Item stacking and stack splitting support
   + Stack limits can be based on closures! => stack limits based on the unit
 - Define crafting recipes in a single line!
-- Supports efficient automatic crafting (the system intelligently picks the right recipes)
+- Supports efficient automatic crafting (craft any recipe that I can)
 - Simple interface for recipe crafting
 - Recipes can be shaped (specific slot requirements) or unshaped
 - Recipes support counted ingredients
